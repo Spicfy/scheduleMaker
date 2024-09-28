@@ -22,3 +22,4 @@ const database = getFirestore(firebaseApp);
 export default {
    databaseAuth, 
    database };
+   

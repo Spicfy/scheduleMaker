@@ -1,6 +1,42 @@
 form div{
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 
 }
+.task-form  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2px;
+    padding: 30px;
+   
+}
+.task-form{
+    background: tomato;
+    height: 400px;
+    width: 500px;
+
+}
+div input, textarea{
+    background: white;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    padding: 20px;  
+}
+.submit-btn{
+    background: blue;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    padding: 20px;  
+    
+}
+
+
+
+
