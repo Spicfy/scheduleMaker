@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  
+  "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,6 +13,7 @@
   },
   "dependencies": {
     "prop-types": "^15.8.1",
+    "firebase": "^10.13.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",

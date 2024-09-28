@@ -2,10 +2,7 @@ import { useState } from 'react';
 import Task from './components/task/task';  // Make sure the import path is correct
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
-//
-// intro page
-
-
+import LoginSignUp from './components/LoginSignUp/LoginSignUp';
 
 function App() {
   const [tasks, setTasks] = useState([
@@ -33,10 +30,12 @@ function App() {
       )
     );
   };
-
+  
   return (
     <>
-      <h1 className = "welcome">Welcome to your <span>schedule maker</span> </h1>
+
+      <h1>Welcome to your schedule maker (name subject to change)</h1>
+      <LoginSignUp />
       <div>
       <div className='schedule_table'>
         <ScheduleGrid schedule={hardcodedSchedule} />
