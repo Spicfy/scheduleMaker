@@ -4,6 +4,10 @@ import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';
 
+//Navigate between webpages
+import React, { Component } from 'react'
+import { NavLink } from "react-router-dom";
+
 function App() {
   const [tasks, setTasks] = useState([
     { id: 1, title: 'Task 1', priority: 'High', completed: false },
@@ -33,9 +37,8 @@ function App() {
   
   return (
     <>
-
-      <h1>Welcome to your schedule maker (name subject to change)</h1>
       <LoginSignUp />
+
       <div>
       <div className='schedule_table'>
         <ScheduleGrid schedule={hardcodedSchedule} />

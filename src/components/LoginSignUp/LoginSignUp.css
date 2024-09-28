@@ -1,3 +1,4 @@
+
 .container{
     display:flex;
     flex-direction: column;
@@ -6,6 +7,8 @@
     width: 600px;
     background: #fff;
     padding-bottom: 30px;
+
+    animation: fadeIn 2.5s ease-in-out forwards; 
 
 }
 
@@ -18,14 +21,14 @@
     margin-top: 30px;
 }
 .text{
-    color: #3c009d;
+    color: #1b70a5;
     font-size: 48px;
     font-weight: 700;
 }
 .underline{
     width: 61px;
     height: 6px;
-    background: #3c009d;
+    background: #1b70a5;
     border-radius: 9px;
 }
 
@@ -89,4 +92,15 @@
 {
     background: #9dc5de;
 
+}
+
+
+/* Fade-in effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* Initial Transparency */
+    }
+    to {
+        opacity: 1; /* Final Transparency */
+    }
 }

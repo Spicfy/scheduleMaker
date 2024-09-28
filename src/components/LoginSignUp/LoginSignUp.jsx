@@ -1,26 +1,27 @@
 import React, {useRef, useState} from 'react'
 import './LoginSignUp.css'
 
-import user_icon from '../../assets/person.png'
 import email_icon from '../../assets/email.png'
 import password_icon from '../../assets/password.png'
 
-// Import DB features
+// Importing DB features
 import firebase from '../../firebase';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 
+// Importing Notyf Toast
+import { Notyf } from 'notyf'; 
+import 'notyf/notyf.min.css';
+
 const LoginSignUp = () => {
 
-    const [action, setAction] = useState('Sign Up')
+    const [action, setAction] = useState('Log In')
     const emailRef = useRef(null)
     const passwordRef = useRef(null)
-    const usernameRef = useRef(null)
 
     /* DEBUG: has focus 
     const handleFocus = () => {
         console.log(emailRef.current.value);
         console.log(passwordRef.current.value);
-        console.log(usernameRef.current.value);
     };*/
 
     const handleActionChange = (newAction) => {
@@ -46,7 +47,7 @@ const LoginSignUp = () => {
     };
 
   return (
-    <div className="container">
+     <div className="container">
         
         <div className="header">
             <div className="text">{action}</div>
@@ -57,7 +58,7 @@ const LoginSignUp = () => {
                 {action == "Login"?<div></div>:<div></div>}
                 <div className="input">
                     <img src={email_icon} alt="" />
-                    <input type="email" placeholder="Email Id" ref={emailRef}/>
+                    <input type="email" placeholder="Email Address" ref={emailRef}/>
                 </div>
                 <div className="input">
                     <img src={password_icon} alt="" />
@@ -65,6 +66,7 @@ const LoginSignUp = () => {
                 </div>
 
         </div>
+    
         {action == "Sign Up"?<div></div>:<div className="forgot-password">Forgot Password? <span>Click Here!</span></div>}
         <div className="submit-container">
             <div className={action==="Sign Up"?"submit gray":"submit"} onClick={() => { handleActionChange('Sign Up'); handleSubmit(); }}>Sign Up</div>
@@ -74,6 +76,7 @@ const LoginSignUp = () => {
     </div>
   )
 }
+
 
 /*
     Log - in
@@ -86,14 +89,45 @@ const LoginSignUp = () => {
         console.log('Log In Clicked');
         console.log('Logging in with:', userEmail, userPassword);
 
+        // Create an instance of Notyf
+        // Position relates to container position
+
+
+        //Container position (decided where the Toast message appears)
+            const container = document.querySelector('.container');
+            const rect = container.getBoundingClientRect();
+    
+            const toastX = rect.left+(rect.width/2) ; 
+            const toastY = rect.top+(rect.top/2);       
+        const notyf = new Notyf({
+            position: {
+                x: toastX,
+                y: toastY,
+              }
+        });
+
         try {
             await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
             console.log("User Logged in Successfully");
+            notyf.success('Signed-In successfully!');
+            notyf.dismiss(notification);
+
             // Jump to Greeting and load Schedule
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.error("Logging error:",errorCode, errorMessage);
+            if (errorCode === 'auth/user-not-found') {
+                console.log('Not Registered');
+                notyf.error("Account doesn't exist. Please register!");
+                notyf.dismiss(notification);
+
+            } else if (errorCode === 'auth/wrong-password') {
+                console.log('Wrong Credentials');
+                notyf.error("Wrong password :(");
+                notyf.dismiss(notification);
+            } else {
+                console.log('Unkown Error',errorCode, errorMessage);
+            }
         }
     };
 
@@ -108,11 +142,26 @@ const LoginSignUp = () => {
 */
     const signUp = async (userEmail, userPassword) => {
 
+        // Create an instance of Notyf
+         //Container position (decided where the Toast message appears)
+            const container = document.querySelector('.container');
+            const rect = container.getBoundingClientRect();
+        
+            const toastX = rect.left+(rect.width/2) ; 
+            const toastY = rect.top+(rect.top/2);       
+            
+            const notyf = new Notyf({
+                position: {
+                    x: toastX,
+                    y: toastY,
+                  }
+            });
+
         //1. Check if user already exist. If so, refuse submission
         try {
             const signInMethods = await fetchSignInMethodsForEmail(firebase.databaseAuth, userEmail);
             if (signInMethods.length > 0) {
-                console.log("This email address has already been used for registration.");
+                notyf.error("Account already exists.");
                 return; // if user already exists, dont proceed
             }
         }catch(error)
@@ -125,11 +174,16 @@ const LoginSignUp = () => {
         try {
             await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
                 console.log('User signed up successfully!');
+
+                notyf.success('User registered');
+                notyf.dismiss(notification);
                 // Jump to UserInfoCollect Page
             } catch(error){
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 console.log('Error signing up',errorCode, errorMessage);
+                notyf.error("Error signing up.");
+                notyf.dismiss(notification);
                 // ..
             };   
         }
