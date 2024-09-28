@@ -40,6 +40,9 @@ const LoginSignUp = () => {
     </div>
   )
 }
+
+const authentification = getAuth(firebaseApp);
+const dataBase = getFirestore(firebaseApp);
 import './LoginSignUp.css'
 
 export default LoginSignUp
