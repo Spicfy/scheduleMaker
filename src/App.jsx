@@ -1,5 +1,6 @@
 import { useState } from 'react';
-<<<<<<< HEAD
+import React, { Component } from 'react'
+import { NavLink } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Task from './components/Task/task';
@@ -8,18 +9,11 @@ import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid';
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';
 
 //Navigate between webpages
-import React, { Component } from 'react'
-import { NavLink } from "react-router-dom";
 import SignUpFormDetailed from './components/LoginSignUp/SignUpFormDetailed';
-=======
-import Task from './components/task/task';  // Ensure the import path is correct
-import DisplayTasks from './components/DisplayTasks/DisplayTasks';
-import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
-import LoginSignUp from './components/LoginSignUp/LoginSignUp';
 import HomePage from './components/HomePage/HomePage';
-import { NavLink } from "react-router-dom";
+
 import './App.css';
->>>>>>> 798d9f0420e479162db205a86b9368b3227e9e38
+
 
 function App() {
   const [tasks, setTasks] = useState([
@@ -35,12 +29,9 @@ function App() {
     "1:00 PM": { taskName: "English Essay", duration: 2 },
     "3:00 PM": { taskName: "Free Time", duration: 1 },
   };
-
-<<<<<<< HEAD
-=======
   const [showSchedule, setShowSchedule] = useState(false); // State to toggle schedule
 
->>>>>>> 798d9f0420e479162db205a86b9368b3227e9e38
+
   const handleTaskSubmit = (newTask) => {
     setTasks([...tasks, newTask]);
   };
@@ -52,11 +43,13 @@ function App() {
       )
     );
   };
-
+  const handleScheduleToggle = () => {
+    setShowSchedule(!showSchedule); // Toggle the schedule display
+  };
   return (
   
       <div className="structure">
-        <LoginSignUp  />
+        <LoginSignUp/>
         <HomePage />
         <div className="task-view">
           <div className='schedule_table'>
