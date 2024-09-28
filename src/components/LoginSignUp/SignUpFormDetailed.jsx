@@ -1,61 +1,39 @@
-import { useState } from 'react';
-import { getAuth } from 'firebase/auth';
+const signUp = async (userEmail, userPassword) => {
+  try {
+      // 检查用户是否已存在
+      const signInMethods = await fetchSignInMethodsForEmail(firebase.databaseAuth, userEmail);
+      if (signInMethods.length > 0) {
+          notyf.error("Account already exists.");
+          return; // 如果用户已存在，不再继续
+      }
+      
+      // 创建新用户
+      const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+      console.log('User signed up successfully!');
+      notyf.success('User registered');
 
-import { useNavigate } from 'react-router-dom';
+      const user = currentUserCredential.user;
+      
+      // 跳转到新的页面，并传递用户信息
+      navigate('/UserInfoCollect', { state: { email: userEmail } });
 
-import { getFirestore, doc, setDoc } from 'firebase/firestore'; 
-import firebase from '../__FirebaseImplement/firebase'; //import firebase
-
-const SignUpFormDetailed = () => {
-  const [userName, setUserName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const auth = getAuth(firebaseApp);
-  const db = getFirestore(firebaseApp);
-
-  const collectUserInfo = async (e) => {
-    e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Store data under userAccount
-      //@
-      await setDoc(doc(db, 'users', user.uid), {
-        userName: userName,
-        email: user.email,
-        createdAt: new Date()
-      });
-      console.log('User signed up and data stored successfully');
-    } catch (error) {
-      console.error('Error signing up: ', error.message);
-    }
-  };
-
-  return (
-    <form onSubmit={collectUserInfo}>
-      <input 
-        type="text" 
-        placeholder="Username" 
-        value={userName} 
-        onChange={(e) => setUserName(e.target.value)} 
-      />
-      <input 
-        type="email" 
-        placeholder="Email" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-      />
-      <input 
-        type="password" 
-        placeholder="Password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-      />
-      <button type="submit">Sign Up</button>
-    </form>
-  );
+  } catch (error) {
+      console.error('Error signing up:', error.message);
+      notyf.error('Error signing up.');
+  }
 };
 
-export default SignUpFormDetailed;
+const logIn = async (userEmail, userPassword) => {
+  try {
+      await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+      console.log("User Logged in Successfully");
+      notyf.success('Signed-In successfully!');
+
+      // 跳转到新的页面，并传递用户信息
+      navigate('/UserInfoCollect', { state: { email: userEmail } });
+
+  } catch (error) {
+      console.error('Error logging in:', error.message);
+      notyf.error('Error logging in.');
+  }
+};
