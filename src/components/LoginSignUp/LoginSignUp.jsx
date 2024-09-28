@@ -201,6 +201,7 @@ const LoginSignUp = () => {
 
                 // ------------> Jump to UserInfoCollect Page
                 navigate('/SignUpFormDetailed');
+                
             }catch(error){
                 const errorCode = error.code;
                 const errorMessage = error.message;

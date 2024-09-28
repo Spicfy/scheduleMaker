@@ -43,23 +43,24 @@ function App() {
       )
     );
   };
-  const handleScheduleToggle = () => {
+ const handleScheduleToggle = () => {
     setShowSchedule(!showSchedule); // Toggle the schedule display
   };
   return (
-  
-      <div className="structure">
-        <LoginSignUp/>
-        <HomePage />
-        <div className="task-view">
-          <div className='schedule_table'>
-            <button onClick={handleScheduleToggle}>
-              {showSchedule ? 'Hide Schedule' : 'View Schedule'}
-            </button>
-            {/* Conditionally render ScheduleGrid based on showSchedule state */}
-            {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} />}
-          </div>
-          
+    <Routes>
+      <Route path="/" element={
+        <div className="structure">
+          <LoginSignUp />
+          <HomePage />
+          <div className="task-view">
+            <div className='schedule_table'>
+              <button onClick={handleScheduleToggle}>
+                {showSchedule ? 'Hide Schedule' : 'View Schedule'}
+              </button>
+              {/* Conditionally render ScheduleGrid based on showSchedule state */}
+              {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} />}
+            </div>
+
             <div className="display-task">
               <h2>Tasks</h2>
               <Task
@@ -76,9 +77,13 @@ function App() {
                 ))}
               </ul>
             </div>
+          </div>
         </div>
-      </div>
+      } />
+      {/* ADD MORE ROUTER HERE */}
+    </Routes>
   );
-}
+};
+
 
 export default App;
