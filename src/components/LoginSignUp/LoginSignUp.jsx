@@ -5,7 +5,7 @@ import email_icon from '../../assets/email.png'
 import password_icon from '../../assets/password.png'
 
 // Importing DB features
-import firebase from '../../firebase';
+import firebase from '../__FirebaseImplement/firebase';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
 
 // Importing Notyf Toast
@@ -158,10 +158,22 @@ const LoginSignUp = () => {
             });
 
         //1. Check if user already exist. If so, refuse submission
+        // ** if user exist but usernameInfo is inexistent, means user quit before filling out 
+        // 2nd registration page.
+        // in this case, delete current account and re-create
         try {
             const signInMethods = await fetchSignInMethodsForEmail(firebase.databaseAuth, userEmail);
             if (signInMethods.length > 0) {
-                notyf.error("Account already exists.");
+                if(true)
+                {
+                    //modify here
+                    notyf.error("Account already exists.");
+                }
+                else
+                {
+                    notyf.error("Account already exists.");
+                }
+                
                 return; // if user already exists, dont proceed
             }
         }catch(error)

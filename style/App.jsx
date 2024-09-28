@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Task from './components/task/task';  // Make sure the import path is correct
-import DisplayTasks from './components/DisplayTasks/DisplayTasks';
-import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
-import LoginSignUp from './components/LoginSignUp/LoginSignUp';
+import Task from '../src/components/task/task';  // Make sure the import path is correct
+import DisplayTasks from '../src/components/DisplayTasks/DisplayTasks';
+import ScheduleGrid from '../src/components/ScheduleGrid/ScheduleGrid'; 
+import LoginSignUp from '../src/components/LoginSignUp/LoginSignUp';
 
 //Navigate between webpages
 import React, { Component } from 'react'
