@@ -2,6 +2,9 @@
 import React, {useRef, useState} from 'react'
 import './LoginSignUp.css'
 
+// Import User and Tasks for DB
+import User from '../__FirebaseImplement/user'
+
 // Srouces
 import email_icon from '../../assets/email.png'
 import password_icon from '../../assets/password.png'
@@ -13,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 // Importing DB features
 import firebase from '../__FirebaseImplement/firebase';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
-import { doc,setDoc } from 'firebase/firestore'  // Additional Info + Tasks
+import { doc,setDoc,addDoc } from 'firebase/firestore'  // Additional Info + Tasks
 
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
@@ -195,13 +198,42 @@ const LoginSignUp = () => {
             console.log('Email:', userEmail);
             console.log('Password:',userPassword);
         try {
-            await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+                const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
                 console.log('User signed up successfully!');
                 notyf.success('User registered');
 
+                // TODO: Create CurrenUser
+                // (demo) Implement empty user Account for Admin (I am fixing bugs but use this for now)
+                const user = currentUserCredential.user;
+                // Instance of User
+                const newUser = new User(userEmail, userPassword);
+                 // Add to firebase
+                 addDoc(collection(firebase, "users"), {
+                    email: newUser.userEmail,
+                    name: newUser.userName,
+                    workingStyle: newUser.workingStyle,
+                    favTasks: newUser.favTasks,
+                    dayStart: newUser.dayStart,
+                    dayEnd: newUser.dayEnd,
+
+                    // Tasks
+                    registeredTasks: newUser.registeredTasks.map(task => ({
+                    
+                      title: task.title,
+                      description: task.description,
+                      startTime: task.startTime,
+                      endTime: task.endTime,
+                    })),
+
+                  }).then(userDocRef => {
+                    console.log("User added with ID: ", userDocRef.id);
+
+                  }).catch(error => {
+                    console.error("Error adding user: ", error);
+                  });
                 // ------------> Jump to UserInfoCollect Page
-                navigate('/SignUpFormDetailed');
-                
+               // navigate('/SignUpFormDetailed');
+
             }catch(error){
                 const errorCode = error.code;
                 const errorMessage = error.message;

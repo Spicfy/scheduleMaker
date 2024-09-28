@@ -1,19 +1,14 @@
-import { useState } from 'react';
-import React, { Component } from 'react'
-import { NavLink } from "react-router-dom";
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Task from './components/Task/task';
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';
-
-//Navigate between webpages
-import SignUpFormDetailed from './components/LoginSignUp/SignUpFormDetailed';
 import HomePage from './components/HomePage/HomePage';
 
 import './App.css';
-
 
 function App() {
   const [tasks, setTasks] = useState([
@@ -31,7 +26,6 @@ function App() {
   };
   const [showSchedule, setShowSchedule] = useState(false); // State to toggle schedule
 
-
   const handleTaskSubmit = (newTask) => {
     setTasks([...tasks, newTask]);
   };
@@ -43,47 +37,50 @@ function App() {
       )
     );
   };
- const handleScheduleToggle = () => {
+
+  const handleScheduleToggle = () => {
     setShowSchedule(!showSchedule); // Toggle the schedule display
   };
-  return (
-    <Routes>
-      <Route path="/" element={
-        <div className="structure">
-          <LoginSignUp />
-          <HomePage />
-          <div className="task-view">
-            <div className='schedule_table'>
-              <button onClick={handleScheduleToggle}>
-                {showSchedule ? 'Hide Schedule' : 'View Schedule'}
-              </button>
-              {/* Conditionally render ScheduleGrid based on showSchedule state */}
-              {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} />}
-            </div>
 
-            <div className="display-task">
-              <h2>Tasks</h2>
-              <Task
-                tasks={tasks}  // This will always be the same for all new tasks
-                onSubmit={handleTaskSubmit}
-              />
-              <ul>
-                {tasks.map((task) => (
-                  <DisplayTasks
-                    key={task.id}
-                    task={task}
-                    onToggle={toggleTaskCompletion}
-                  />
-                ))}
-              </ul>
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <div className="structure">
+            <LoginSignUp />
+            <HomePage />
+            <div className="task-view">
+              <div className='schedule_table'>
+                <button onClick={handleScheduleToggle}>
+                  {showSchedule ? 'Hide Schedule' : 'View Schedule'}
+                </button>
+                {/* Conditionally render ScheduleGrid based on showSchedule state */}
+                {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} />}
+              </div>
+
+              <div className="display-task">
+                <h2>Tasks</h2>
+                <Task
+                  tasks={tasks}  // This will always be the same for all new tasks
+                  onSubmit={handleTaskSubmit}
+                />
+                <ul>
+                  {tasks.map((task) => (
+                    <DisplayTasks
+                      key={task.id}
+                      task={task}
+                      onToggle={toggleTaskCompletion}
+                    />
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-      } />
-      {/* ADD MORE ROUTER HERE */}
-    </Routes>
+        } />
+        {/* ADD MORE ROUTER HERE */}
+      </Routes>
+    </Router>
   );
-};
-
+}
 
 export default App;
