@@ -1,16 +1,16 @@
 .everything{
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 
 }
 .main {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif; */
   }
   
   .left-content {

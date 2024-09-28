@@ -12,15 +12,8 @@ body{
     font-weight: 300;
     text-align: center;
     font-size: 45px;
-    margin: 35px;
+
 }
     .welcome span{
         font-weight: 400;
     }
-
-.schedule_table{
-    margin: 0 auto;
-    width: 95%;
-    background-color: rgb(255, 195, 195);
-    height: 300px;
-}

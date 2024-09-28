@@ -61,11 +61,12 @@ const HomePage = () => {
           <div className="date">{todayDate}</div>
         </div>
       </div>
-      <div className="task-view">
-          <div className='schedule_table'>
-            <button onClick={handleScheduleToggle}>
+      <div className="task-view"> 
+        <button onClick={handleScheduleToggle}>
               {showSchedule ? 'Hide Schedule' : 'View Schedule'}
-            </button>
+          </button>
+          <div className='schedule_table'>
+           
             {/* Conditionally render ScheduleGrid based on showSchedule state */}
             {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} display={showSchedule} />}
           </div>
