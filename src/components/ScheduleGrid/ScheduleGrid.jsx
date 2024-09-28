@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import '/style/schedule.css'; 
+import './ScheduleGrid.css';
 
 const ScheduleGrid = ({ schedule }) => {
     const timeBlocks = [
