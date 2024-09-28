@@ -11,34 +11,42 @@ const Task = ({ title, description, priority, onSubmit }) => {
     const taskObject = {
       title: newTitle,
       priority: newPriority,
-    }
-  }
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    };
     // Call the onSubmit function passed as a prop with the form data
-    onSubmit({ formTitle, formDescription, formPriority });
+    onSubmit(taskObject);
     
     // Optionally reset the form after submission
-    setFormTitle('');
-    setFormDescription('');
-    setFormPriority('');
+    setNewTitle('');
+    setNewPriority('');
   };
-  const handleTitleChange = (event) =>{
-    setNewTitle
-  }
+
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
+  };
+
+  const handlePriorityChange = (event) => {
+    setNewPriority(event.target.value);
+  };
 
   return (
-    <form onSubmit = {addTask}>
-      <div>title: <input value={newName} onChange = {handleTitleChange} 
-      placeholder = "Enter task title" required 
-      /></div>
+    <form onSubmit={addTask}>
+      <div>
+        title: <input value={newTitle} onChange={handleTitleChange} 
+        placeholder="Enter task title" required 
+        />
+      </div>
       <div>
         <label>priority: </label>
         <select value={newPriority} onChange={handlePriorityChange} required>
           <option value="">Select Priority</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
       </div>
+      <button type="submit">Add Task</button>
     </form>
   );
+};
 
 export default Task;
