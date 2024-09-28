@@ -1,8 +1,8 @@
 // Import Google Firebase features
 import { initializeApp } from "firebase/app";
+import { getAuth } from 'firebase/auth'                       // Basic Authen
+import { getFirestore} from 'firebase/firestore'; 
 
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 
 
 const firebaseApp = initializeApp({
@@ -17,7 +17,6 @@ const firebaseApp = initializeApp({
 
 const databaseAuth = getAuth(firebaseApp);
 const database = getFirestore(firebaseApp);
-
 
 export default {
    databaseAuth, 

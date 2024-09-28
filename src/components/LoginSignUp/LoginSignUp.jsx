@@ -1,12 +1,22 @@
+// React
 import React, {useRef, useState} from 'react'
 import './LoginSignUp.css'
 
+// Import User and Tasks for DB
+import User from '../__FirebaseImplement/user'
+
+// Srouces
 import email_icon from '../../assets/email.png'
 import password_icon from '../../assets/password.png'
+
+// Page Jumping with React Router
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Importing DB features
 import firebase from '../__FirebaseImplement/firebase';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
+import { doc,setDoc,addDoc } from 'firebase/firestore'  // Additional Info + Tasks
 
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
@@ -14,9 +24,11 @@ import 'notyf/notyf.min.css';
 
 const LoginSignUp = () => {
 
-    const [action, setAction] = useState('Log In')
-    const emailRef = useRef(null)
-    const passwordRef = useRef(null)
+    const [action, setAction] = useState('Log In');
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+
+    const navigate = useNavigate();
 
     /* DEBUG: has focus 
     const handleFocus = () => {
@@ -29,6 +41,8 @@ const LoginSignUp = () => {
     };
 
     const handleSubmit = async (e) => {
+        e.preventDefault();
+        
         const userEmail = emailRef.current.value;
         const userPassword = passwordRef.current.value;
 
@@ -69,8 +83,8 @@ const LoginSignUp = () => {
     
         {action == "Sign Up"?<div></div>:<div className="forgot-password">Forgot Password? <span>Click Here!</span></div>}
         <div className="submit-container">
-            <div className={action==="Sign Up"?"submit gray":"submit"} onClick={() => { handleActionChange('Sign Up'); handleSubmit(); }}>Sign Up</div>
-            <div className={action==="Login" ? "submit gray":"submit"} onClick={() => { handleActionChange('Login'); handleSubmit(); }}>Login</div>
+            <div className={action==="Sign Up"?"submit gray":"submit"} onClick={(e) => { handleActionChange('Sign Up'); handleSubmit(e); }}>Sign Up</div>
+            <div className={action==="Login" ? "submit gray":"submit"} onClick={(e) => { handleActionChange('Login'); handleSubmit(e); }}>Login</div>
         </div>
         
     </div>
@@ -110,21 +124,20 @@ const LoginSignUp = () => {
             await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
             console.log("User Logged in Successfully");
             notyf.success('Signed-In successfully!');
-            notyf.dismiss(notification);
+
 
             // Jump to Greeting and load Schedule
+
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
             if (errorCode === 'auth/user-not-found') {
                 console.log('Not Registered');
                 notyf.error("Account doesn't exist. Please register!");
-                notyf.dismiss(notification);
 
             } else if (errorCode === 'auth/wrong-password') {
                 console.log('Wrong Credentials');
                 notyf.error("Wrong password :(");
-                notyf.dismiss(notification);
             } else {
                 console.log('Unkown Error',errorCode, errorMessage);
             }
@@ -141,6 +154,7 @@ const LoginSignUp = () => {
     *4. Log in, jump to ask more info
 */
     const signUp = async (userEmail, userPassword) => {
+
 
         // Create an instance of Notyf
          //Container position (decided where the Toast message appears)
@@ -184,20 +198,53 @@ const LoginSignUp = () => {
             console.log('Email:', userEmail);
             console.log('Password:',userPassword);
         try {
-            await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+                const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
                 console.log('User signed up successfully!');
-
                 notyf.success('User registered');
-                notyf.dismiss(notification);
-                // Jump to UserInfoCollect Page
-            } catch(error){
+
+                // TODO: Create CurrenUser
+                // (demo) Implement empty user Account for Admin (I am fixing bugs but use this for now)
+                const user = currentUserCredential.user;
+                // Instance of User
+                const newUser = new User(userEmail, userPassword);
+                 // Add to firebase
+                 addDoc(collection(firebase, "users"), {
+                    email: newUser.userEmail,
+                    name: newUser.userName,
+                    workingStyle: newUser.workingStyle,
+                    favTasks: newUser.favTasks,
+                    dayStart: newUser.dayStart,
+                    dayEnd: newUser.dayEnd,
+
+                    // Tasks
+                    registeredTasks: newUser.registeredTasks.map(task => ({
+                    
+                      title: task.title,
+                      description: task.description,
+                      startTime: task.startTime,
+                      endTime: task.endTime,
+                    })),
+
+                  }).then(userDocRef => {
+                    console.log("User added with ID: ", userDocRef.id);
+
+                  }).catch(error => {
+                    console.error("Error adding user: ", error);
+                  });
+                // ------------> Jump to UserInfoCollect Page
+               // navigate('/SignUpFormDetailed');
+
+            }catch(error){
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log('Error signing up',errorCode, errorMessage);
-                notyf.error("Error signing up.");
-                notyf.dismiss(notification);
+
+                console.log('Unkown Error',errorCode, errorMessage);
+                notyf.error('Error signing up.');
                 // ..
             };   
+
+   
+         
         }
         //const user = userCredential.user;
     // ...
@@ -208,6 +255,6 @@ const LoginSignUp = () => {
 
     }
 
-import './LoginSignUp.css'
+
 
 export default LoginSignUp

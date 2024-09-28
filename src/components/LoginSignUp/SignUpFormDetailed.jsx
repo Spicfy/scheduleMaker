@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { getAuth } from 'firebase/auth';
+
+import { useNavigate } from 'react-router-dom';
+
 import { getFirestore, doc, setDoc } from 'firebase/firestore'; 
 import firebase from '../__FirebaseImplement/firebase'; //import firebase
 
