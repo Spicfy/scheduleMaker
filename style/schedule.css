@@ -1,0 +1,32 @@
+.schedule_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #ffecec;
+    /* Light pink */
+}
+
+.schedule_table th,
+.schedule_table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+.schedule_table th {
+    background-color: #f5a9a9;
+    /* Slightly darker pink for the header */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.schedule_table td {
+    background-color: #fff;
+    /* White background for the table cells */
+}
+
+.schedule_table td[rowspan] {
+    background-color: #f9f9f9;
+    /* Slightly different background for tasks with duration */
+    text-align: center;
+}
