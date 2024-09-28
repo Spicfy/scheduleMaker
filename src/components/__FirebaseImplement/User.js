@@ -34,7 +34,7 @@ class User {
         this.#userPassword = userPassword; // MUST
         this.#userName = userName; 
         this.#workingStyle = workingStyle; 
-        this.#favTasks = []; 
+        this.#favTasks = [User.MAX_FAVOURITE]; 
         this.#dayStart = User.TIME_DAY_START; 
         this.#dayEnd = User.TIME_DAY_END; 
     } 
