@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-
+import './task.css';
 const Task = ({ tasks, onSubmit }) => {  // Destructure props
   const [newTitle, setNewTitle] = useState('');
   const [newPriority, setNewPriority] = useState('');
+  const [newDescription, setNewDescription] = useState('');
 
   // Handle form submission
   const addTask = (event) => {
     event.preventDefault();
     const taskObject = {
       title: newTitle,
+      description: newDescription,
       priority: newPriority,
       id: tasks.length + 1,  // Unique id logic here can be improved
       completed: false
@@ -24,6 +26,9 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
   const handleTitleChange = (event) => {
     setNewTitle(event.target.value);
   };
+  const handleDescriptionChange = (event) => {
+    setNewDescription(event.target.value);
+  }
 
   const handlePriorityChange = (event) => {
     setNewPriority(event.target.value);
@@ -38,6 +43,12 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
           onChange={handleTitleChange} 
           placeholder="Enter task title" 
           required 
+        />
+      </div>
+      <div>
+        Description 
+        <textarea col = "50" row = "50" value={newTitle} onChange={handleDescriptionChange} placeholder="Enter task description" required
+        
         />
       </div>
       <div>

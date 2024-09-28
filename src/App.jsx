@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Task from './components/task/task';  // Make sure the import path is correct
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
-
+import LoginSignUp from './components/LoginSignUp/LoginSignUp';
 function App() {
   const [tasks, setTasks] = useState([
     { id: 1, title: 'Task 1', priority: 'High', completed: false },
@@ -19,10 +19,11 @@ function App() {
       )
     );
   };
-
+  
   return (
     <>
       <h1>Welcome to your schedule maker (name subject to change)</h1>
+      <LoginSignUp />
       <div>
         <h2>Tasks</h2>
         <Task 
