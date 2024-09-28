@@ -1,11 +1,11 @@
 // Import Google Firebase features
 import { initializeApp } from "firebase/app";
-// Import firebase Authen
-import{ getAuth }from 'firebase/auth'
 
-import { getAnalytics } from "firebase/analytics";
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
-const frirebaseAPP = initializeApp({
+
+const firebaseApp = initializeApp({
     apiKey: "AIzaSyCTktbxD5JoYeZ40VE_DZdI3mrttJJ6XKw",
     authDomain: "schedulemaker-bb299.firebaseapp.com",
     projectId: "schedulemaker-bb299",
@@ -14,3 +14,11 @@ const frirebaseAPP = initializeApp({
     appId: "1:844328317937:web:9f886252ca9f143d258a50",
     measurementId: "G-M1S60VE01B"
   });
+
+const databaseAuth = getAuth(firebaseApp);
+const database = getFirestore(firebaseApp);
+
+
+export default {
+   databaseAuth, 
+   database };
