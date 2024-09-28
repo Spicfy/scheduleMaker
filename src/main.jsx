@@ -1,7 +1,7 @@
 //Import React features
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from '../style/App.jsx'
+import App from './App'
 
 
 
