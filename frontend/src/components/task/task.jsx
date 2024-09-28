@@ -35,7 +35,7 @@ const Task = ({ title, description, priority, onSubmit }) => {
       <div>
         <label>priority: </label>
         <select value={newPriority} onChange={handlePriorityChange} required>
-          <option value=""></option>
+          <option value="">Select Priority</option>
         </select>
       </div>
     </form>
