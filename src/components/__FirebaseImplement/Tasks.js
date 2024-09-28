@@ -18,7 +18,7 @@ class Task {
     static TIME_TASK_END = "23:59"; 
 
     // 2. Constructor
-    constructor(taskTitle, taskDescript,taskStartTime,taskEndTime,taskDifficulty = 1) {
+    constructor(taskTitle =" ", taskDescript=" ",taskStartTime=" ",taskEndTime = " ",taskDifficulty = 1) {
       this.#taskTitle = taskTitle;
       this.#taskDescription = taskDescript;
       // MAKE SURE WILL NOT PASS TO  DB IF DURATION <0

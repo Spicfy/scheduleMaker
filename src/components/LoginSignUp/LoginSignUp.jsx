@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 // Importing DB features
 import firebase from '../__FirebaseImplement/firebase';
 import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
-import { doc,setDoc,addDoc } from 'firebase/firestore'  // Additional Info + Tasks
+import { doc,setDoc,addDoc,collection } from 'firebase/firestore'  // Additional Info + Tasks
 
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
@@ -207,8 +207,9 @@ const LoginSignUp = () => {
                 const user = currentUserCredential.user;
                 // Instance of User
                 const newUser = new User(userEmail, userPassword);
+                
                  // Add to firebase
-                 addDoc(collection(firebase, "users"), {
+                 addDoc(collection(firebase.database, "users"), {
                     email: newUser.userEmail,
                     name: newUser.userName,
                     workingStyle: newUser.workingStyle,
@@ -217,16 +218,20 @@ const LoginSignUp = () => {
                     dayEnd: newUser.dayEnd,
 
                     // Tasks
-                    registeredTasks: newUser.registeredTasks.map(task => ({
-                    
-                      title: task.title,
-                      description: task.description,
-                      startTime: task.startTime,
-                      endTime: task.endTime,
-                    })),
+                    registeredTasks: (Array.isArray(newUser.registeredTasks) ? 
+                    newUser.registeredTasks.map(task => ({
+                        title: task.title,
+                        description: task.description,
+                        startTime: task.startTime,
+                        endTime: task.endTime,
+                     })) : []),// if undefined,make empty
 
                   }).then(userDocRef => {
+                    console.log('Email:', userEmail);
+                    console.log('Password:',userPassword);
                     console.log("User added with ID: ", userDocRef.id);
+
+                    addTask(currentUserCredential);
 
                   }).catch(error => {
                     console.error("Error adding user: ", error);
@@ -237,7 +242,6 @@ const LoginSignUp = () => {
             }catch(error){
                 const errorCode = error.code;
                 const errorMessage = error.message;
-
                 console.log('Unkown Error',errorCode, errorMessage);
                 notyf.error('Error signing up.');
                 // ..
@@ -255,6 +259,46 @@ const LoginSignUp = () => {
 
     }
 
-
+    //addTask Test
+    async function addTask(currentUserCredential) {
+        const title = prompt("Task Title:");
+        const description = prompt("Task Descript:");
+        const startTime = prompt("Start Time:");
+        const endTime = prompt("End Time:");
+    
+        // Check_Input
+        if (!title || !description || !startTime || !endTime) {
+            alert("Need all of them");
+            return;
+        }
+    
+        const newTask = {
+            title: title,
+            description: description,
+            startTime: startTime,
+            endTime: endTime,
+        };
+    
+        // Get Email
+        const currentUserEmail = currentUserCredential.user.email;
+    
+        const userDocRef = doc(firebase.database, "users", currentUserEmail);
+    
+        try {
+            // Renew 
+            await updateDoc(userDocRef, {
+                registeredTasks: arrayUnion(newTask), // Add Task
+            });
+    
+            console.log("任务添加成功:", newTask);
+            alert("任务已成功添加！");
+    
+        } catch (error) {
+            console.error("添加任务时出错: ", error);
+            alert("添加任务失败，请稍后再试。");
+        }
+    }
+    
+    
 
 export default LoginSignUp
