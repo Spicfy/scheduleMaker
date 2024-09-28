@@ -199,6 +199,7 @@ const LoginSignUp = () => {
             console.log('Password:',userPassword);
         try {
                 const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+                console.log("credentials", currentUserCredential);
                 console.log('User signed up successfully!');
                 notyf.success('User registered');
 

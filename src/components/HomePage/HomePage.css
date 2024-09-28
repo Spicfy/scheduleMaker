@@ -1,13 +1,21 @@
+.everything{
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+
+}
 .main {
-    display: flex;
-    justify-content: space-between;
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif; */
   }
   
   .left-content {
-    display: flex;
-    flex-direction: column;
+    width: 550px;
+
   }
   
   h1 {
@@ -63,3 +71,32 @@
     font-size: 24px;
     font-weight: bold;
   }
+  *{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.structure{
+    display: block;
+
+}
+.structure > *{
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+.task-view{
+   display: block;
+
+}
+.task-view > * {
+    margin-top: 350px;
+ 
+}
+.display-tasks{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px;
+}
