@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 
-const Task = ({ title, description, priority, onSubmit }) => {
+const Task = ({ tasks, onSubmit }) => {  // Destructure props
   const [newTitle, setNewTitle] = useState('');
   const [newPriority, setNewPriority] = useState('');
 
   // Handle form submission
-
   const addTask = (event) => {
     event.preventDefault();
     const taskObject = {
       title: newTitle,
       priority: newPriority,
+      id: tasks.length + 1,  // Unique id logic here can be improved
+      completed: false
     };
     // Call the onSubmit function passed as a prop with the form data
     onSubmit(taskObject);
     
-    // Optionally reset the form after submission
+    // Reset the form after submission
     setNewTitle('');
     setNewPriority('');
   };
@@ -31,12 +32,16 @@ const Task = ({ title, description, priority, onSubmit }) => {
   return (
     <form onSubmit={addTask}>
       <div>
-        title: <input value={newTitle} onChange={handleTitleChange} 
-        placeholder="Enter task title" required 
+        Title: 
+        <input 
+          value={newTitle} 
+          onChange={handleTitleChange} 
+          placeholder="Enter task title" 
+          required 
         />
       </div>
       <div>
-        <label>priority: </label>
+        <label>Priority: </label>
         <select value={newPriority} onChange={handlePriorityChange} required>
           <option value="">Select Priority</option>
           <option value="low">Low</option>
