@@ -119,17 +119,12 @@ def create_prompt(user_preferences, tasks):
     For example: 
     [
         {{
-            "task": "<Task Name>",
+            "task": "<Name of task> <dash> <Description>",
             "start_time": "<Start Time>",
             "end_time": "<End Time>",
             "duration": "<Duration>"
+            "priority": "<Priority>"
         }},
-        {{
-            "task": "<Task Name>",
-            "start_time": "<Start Time>",
-            "end_time": "<End Time>",
-            "duration": "<Duration>"
-        }}
     ]
     """
     
