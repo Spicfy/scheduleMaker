@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom'; // 移除多余的 BrowserRouter
+import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; // 移除多余的 BrowserRouter
 
-import Task from './components/Task/task';
+
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';

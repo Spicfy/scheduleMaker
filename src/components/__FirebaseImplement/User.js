@@ -57,17 +57,7 @@ class User {
         return this.#workingStyle;
     }
 
-    get favTasks() {
-        return this.#favTasks;
-    }
-
-    get dayStart() {
-        return this.#dayStart;
-    }
-
-    get dayEnd() {
-        return this.#dayEnd;
-    }
+   
 
     // 4. Accessor
     set userEmail(value) {
@@ -90,21 +80,7 @@ class User {
         }
     }
 
-    set favTasks(value) {
-        if (this.#favTasks.length < User.MAX_FAVOURITE) {
-            this.#favTasks.push(value); 
-        } else {
-            throw new Error("Cannot add more than " + User.MAX_FAVOURITE + " favourite tasks.");
-        }
-    }
 
-    set dayStart(value) {
-        this.#dayStart = value; 
-    }
-
-    set dayEnd(value) {
-        this.#dayEnd = value;
-    }
 
     set registeredTasks(value) {
         this.#registeredTasks = value; 
