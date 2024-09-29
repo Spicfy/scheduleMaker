@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; // 移除多余的 BrowserRouter
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; // remove browser
 
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';
-import SignUpFormDetailed from './components/LoginSignUp/UserInfoCollect';
 import HomePage from './components/HomePage/HomePage';
+//import SignUpFormDetailed from './components/LoginSignUp/UserInfoCollect';
 
 import './App.css';
 
@@ -43,15 +43,15 @@ function App() {
   };
 
   return (
-
+//'HOME' receives logged-in User's Id from DB
     <Router>
   
         <nav>
-          <Link to="/home" className="btn">Home</Link>
+          <Link to="/home/:userId" className="btn">Home</Link> 
           <Link to="/login" className="btn">Login</Link>
         </nav>
         <Routes>
-          <Route path="/home" element={<HomePage />}  />
+          <Route path="/home/:userId" element={< HomePage />}  />
           <Route path="/login" element={<LoginSignUp />} />
         </Routes>
     

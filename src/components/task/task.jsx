@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
+
+//import firebase features for adding tasks
+import firebase from '../__FirebaseImplement/firebase';  //get registered DB for project
+import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
+
 import './task.css';
 
 const Task = ({ tasks, onSubmit }) => {  // Destructure props
-  const [newTitle, setNewTitle] = useState('');
-  const [newPriority, setNewPriority] = useState('');
-  const [newDescription, setNewDescription] = useState('');
+  const [newTitle, setTaskTitle] = useState('');
+  const [newPriority, setTaskPriority] = useState('');
+  const [newDescription, setTaskDescription] = useState('');
 
   // Handle form submission
-  const addTask = (event) => {
+  const addTask = async (event) => {
     event.preventDefault();
     
     // Construct the task object
-    const taskObject = {
+    const newTask = {
       title: newTitle,
       description: newDescription,
       priority: newPriority,
-      id: tasks.length + 1,  // You could use a more robust method for ID generation
       completed: false
     };
 
@@ -57,7 +61,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
           id="title"
           type="text"
           value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
+          onChange={(e) => setTaskTitle(e.target.value)}
           placeholder="Enter task title"
           required
         />
@@ -68,7 +72,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
         <textarea
           id="description"
           value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
+          onChange={(e) => setTaskDescription(e.target.value)}
           placeholder="Enter task description"
           rows="5"
           cols="30"
@@ -80,8 +84,8 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
         <label htmlFor="priority">Priority: </label>
         <select
           id="priority"
-          value={newPriority}
-          onChange={(e) => setNewPriority(e.target.value)}
+          value={oritynewPri}
+          onChange={(e) => setTaskPriority(e.target.value)}
           required
         >
           <option value="">Select Priority</option>

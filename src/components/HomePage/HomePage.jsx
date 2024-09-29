@@ -5,11 +5,22 @@ import Task from '../task/task';
 import DisplayTasks from '../DisplayTasks/DisplayTasks';
 import ScheduleGrid from '../ScheduleGrid/ScheduleGrid';
 
+// Receive user Param
+import { useParams } from 'react-router-dom';
+// Features concerning DB
+import { addDoc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
+import firebase from '../__FirebaseImplement/firebase';
+
+
 const HomePage = () => {
   const [tasks, setTasks] = useState([
     { id: 1, title: 'Task 1', priority: 'High', completed: false },
     { id: 2, title: 'Task 2', priority: 'Medium', completed: false },
   ]);
+
+  // Receive userID once jumped to HomePage
+  const {userId} = useParams();
+  console.log(userId);
 
   const hardcodedSchedule = {
     '9:00 AM': { taskName: 'Math Homework', duration: 2 },

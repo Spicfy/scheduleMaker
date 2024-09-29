@@ -1,22 +1,23 @@
-// React
+// Import React
 import React, { useEffect, useRef, useState } from 'react';
 import './LoginSignUp.css'
 
-// Import User and Tasks for DB
+// Import User for DB
 import User from '../__FirebaseImplement/user'
+// Importing DB features
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { addDoc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
+import firebase from '../__FirebaseImplement/firebase';
 
 // Srouces
 import email_icon from '../../assets/email.png'
 import password_icon from '../../assets/password.png'
 
 // Page Jumping with React Router
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-// Importing DB features
-import firebase from '../__FirebaseImplement/firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
+
+
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
 import 'notyf/notyf.min.css';
@@ -29,11 +30,19 @@ const LoginSignUp = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null); // Store User Data
 
+    // -----> Jump to Home Page with userId logged in
+    const jumpToMain = (userId) =>{
+        navigate(`/home/${userId}`);
+
+    }
     /* DEBUG: has focus 
     const handleFocus = () => {
         console.log(emailRef.current.value);
         console.log(passwordRef.current.value);
     };*/
+    
+
+
 
     const handleActionChange = (newAction) => {
         setAction(newAction);
@@ -45,6 +54,11 @@ const LoginSignUp = () => {
         const userEmail = emailRef.current.value;
         const userPassword = passwordRef.current.value;
 
+        if (!userEmail || !userPassword) {
+            // You can show a toast or an alert here
+            alert("Email and password are required.");
+            return;
+        }
         // test inputs
         console.log('Email:', userEmail);
         console.log('Password:', userPassword);
@@ -104,29 +118,33 @@ const LoginSignUp = () => {
 
         // Create an instance of Notyf
         // Position relates to container position
-
-
         //Container position (decided where the Toast message appears)
             const container = document.querySelector('.container');
             const rect = container.getBoundingClientRect();
     
             const toastX = rect.left+(rect.width/2) ; 
             const toastY = rect.top+(rect.top/2);       
-        const notyf = new Notyf({
+            const notyf = new Notyf({
             position: {
                 x: toastX,
                 y: toastY,
               }
         });
 
+        // Try to Log In
         try {
-            await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
-            console.log("User Logged in Successfully");
-            notyf.success('Signed-In successfully!');
+            // Get current user.
+            // Get userId from current user
+            const currentUserCredential = await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+            //console.log("User Logged in Successfully");
+            console.log('Log In Clicked');
+            notyf.success('Log-In successfully!');
 
+            const userId = currentUserCredential.user.uid;
+            console.log(userId);
 
-            // Jump to Greeting and load Schedule
-
+            // Jump to Main, carrying userId (to later retrieve Snapshot)
+            jumpToMain(userId);
 
         } catch (error) {
             const errorCode = error.code;
@@ -202,11 +220,12 @@ const LoginSignUp = () => {
                 const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
                 console.log("credentials", currentUserCredential);
                 console.log('User signed up successfully!');
+                
                 notyf.success('User registered');
 
                 // TODO: Create CurrenUser
                 // (demo) Implement empty user Account for Admin (I am fixing bugs but use this for now)
-                const user = currentUserCredential.user;
+                const userId = currentUserCredential.user.uid;
                 // Instance of User
                 const newUser = new User(userEmail, userPassword);
                 
@@ -222,7 +241,7 @@ const LoginSignUp = () => {
                     console.log('Password:',userPassword);
                     console.log("User added with ID: ", userDocRef.id);
 
-                    addTask(userDocRef.id);
+                jumpToMain(userId);
 
             }catch(error){
                 const errorCode = error.code;
@@ -236,58 +255,5 @@ const LoginSignUp = () => {
          
         }
         //const user = userCredential.user;
-    // ...
-    
 
-    // Display Greeting MSG/Interface, jump to ScheduleGrid
-    const Greetings = () => {
-
-    }
-
-    //addTask Test
-    async function addTask(userId) {
-        const title = prompt("Task Title:");
-        const description = prompt("Task Descript:");
-        // const prioritized 
-
-        // Get current user
-        const currentUser = userId;
-        console.log('Current User:', currentUser);
-        // Check_Input
-        if (!title || !description) {
-            alert("Need all of them");
-            return;
-        }
-    
-        const newTask = {
-            title: title,
-            description: description,
-        };
-        /*const userDocRef = doc(firebase.database, "users", currentUser); //Link json doc associated to User
-        console.log('current Document', userDocRef);*/
-        const userDocRef = doc(firebase.database, "users", userId);
-        // Debug: if doc doesnt eist
-        try {
-            console.log('Current User:', currentUser);
-            const userDoc = await getDoc(userDocRef);
-            if (!userDoc.exists()) {
-                console.error("No such user document!");
-                return;
-            }
-            // Renew 
-            await updateDoc(userDocRef, {
-                registeredTasks: arrayUnion(newTask), // Add Task
-            });
-    
-            console.log("Added:", newTask);
-            alert("Task Added！");
-    
-        } catch (error) {
-            console.error("Task not added: ", error);
-            alert("Addition failed。");
-        }
-    }
-    
-    
-
-export default LoginSignUp
+export default LoginSignUp;
