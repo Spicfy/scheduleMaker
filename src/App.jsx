@@ -44,44 +44,19 @@ function App() {
   };
 
   return (
-    <div className="structure">
-      <Routes>
-        <Route path="/" element={
-          <>
-            <LoginSignUp />
-            <HomePage />
-            <div className="task-view">
-              <div className='schedule_table'>
-                <button onClick={handleScheduleToggle}>
-                  {showSchedule ? 'Hide Schedule' : 'View Schedule'}
-                </button>
-                {/* Conditionally render ScheduleGrid based on showSchedule state */}
-                {showSchedule && <ScheduleGrid schedule={hardcodedSchedule} />}
-              </div>
 
-              <div className="display-task">
-                <h2>Tasks</h2>
-                <Task
-                  tasks={tasks}  // This will always be the same for all new tasks
-                  onSubmit={handleTaskSubmit}
-                />
-                <ul>
-                  {tasks.map((task) => (
-                    <DisplayTasks
-                      key={task.id}
-                      task={task}
-                      onToggle={toggleTaskCompletion}
-                    />
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </>
-        } />
-        {/* Router */}
-        <Route path="/signup" element={<SignUpFormDetailed />} />
-      </Routes>
-    </div>
+    <Router>
+  
+        <nav>
+          <Link to="/home" className="btn">Home</Link>
+          <Link to="/login" className="btn">Login</Link>
+        </nav>
+        <Routes>
+          <Route path="/home" element={<HomePage />}  />
+          <Route path="/login" element={<LoginSignUp />} />
+        </Routes>
+    
+    </Router>
   );
 }
 
