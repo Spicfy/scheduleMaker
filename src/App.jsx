@@ -12,11 +12,11 @@ function App() {
     <Router>
   
         <nav>
-          <Link to="/home">Home</Link>
-          <Link to="/login">Login</Link>
+          <Link to="/home" className="btn">Home</Link>
+          <Link to="/login" className="btn">Login</Link>
         </nav>
         <Routes>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />}  />
           <Route path="/login" element={<LoginSignUp />} />
         </Routes>
     

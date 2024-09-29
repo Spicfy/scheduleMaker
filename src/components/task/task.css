@@ -1,43 +1,46 @@
-form div{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-
-}
-.task-form  div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 2px;
-    padding: 30px;
-   
-}
-.task-form{
-    background: tomato;
-    height: 400px;
-    width: 500px;
-
-}
-div input, textarea{
-    background: white;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-    padding: 20px;  
-}
-.submit-btn{
-    background: blue;
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-    padding: 20px;  
-    cursor: pointer;
-    
+/* Style the input and textarea fields */
+input[type="text"],
+textarea {
+  background-color: #f0f4f7; /* Light background color */
+  color: #333333; /* Text color */
+  border: 2px solid #4a90e2; /* Border color */
+  padding: 10px;
+  border-radius: 5px; /* Rounded corners */
+  width: 100%; /* Full width */
+  box-sizing: border-box;
+  font-size: 16px;
 }
 
+/* Change the border color on focus */
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #1e90ff; /* Blue border when focused */
+  outline: none; /* Remove default outline */
+}
 
+/* Placeholder text color */
+input[type="text"]::placeholder,
+textarea::placeholder {
+  color: #999999; /* Placeholder text color */
+}
 
+/* Style the form group for spacing */
+.form-group {
+  margin-bottom: 15px; /* Add space between form elements */
+}
 
+/* Style the submit button */
+.submit-btn {
+  background-color: #4a90e2; /* Button background color */
+  color: white; /* Button text color */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.submit-btn:hover {
+  background-color: #357ABD; /* Darker blue on hover */
+}

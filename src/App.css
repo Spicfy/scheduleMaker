@@ -1,2 +1,12 @@
-.structure{
+.btn{
+    background: blue;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    position: relative;
+    top: 30px;
+    
 }
