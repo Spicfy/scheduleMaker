@@ -4,6 +4,7 @@ from openai import OpenAI  # Import the OpenAI client
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import json
 
 app = Flask(__name__)
 CORS(app)  # Enable cross-origin requests
@@ -83,11 +84,17 @@ def generate_schedule():
                 ],
                 max_tokens=500
             )
-            print("OpenAI Response:", completion)  # Log the response for debugging
+            
             schedule = completion.choices[0].message.content
-
             print(schedule)
-            return jsonify({"schedule": schedule}), 200
+
+            try:
+                schedule_json = json.loads(schedule)
+                return jsonify({"schedule": schedule_json}), 200
+            except json.JSONDecodeError:
+                print("Error decoding JSON:", schedule)  # Log the invalid JSON string
+                return jsonify({"error": "Invalid JSON format in response."}), 500
+            
         except Exception as e:
             print("OpenAI API Error:", str(e))  # Log OpenAI API errors
             return jsonify({"error": "OpenAI API call failed: " + str(e)}), 500
@@ -102,13 +109,28 @@ def create_prompt(user_preferences, tasks):
                            for i, task in enumerate(tasks)])
     
     prompt = f"""
-    I need help scheduling my day. I am an expert task scheduler and I need to plan my day efficiently.
-    Based on my email, {user_preferences}, try to analyze and predict my personality and preferences.
+    I need help scheduling my day. You are an expert task scheduler and I need to plan my day efficiently.
+    Based on the task list below, please generate a schedule for me.
 
     The user has the following tasks for today:
     {task_list}
-
-    Based on these, generate an efficient schedule for the day.
+    
+    ONLY GIVE ME YOUR REPSPONSE IN JSON FORMAT, FOR EACH TASK. INCLUDE ONLY THE TASK NAME, START TIME, END TIME, AND DURATION
+    For example: 
+    [
+        {{
+            "task": "<Task Name>",
+            "start_time": "<Start Time>",
+            "end_time": "<End Time>",
+            "duration": "<Duration>"
+        }},
+        {{
+            "task": "<Task Name>",
+            "start_time": "<Start Time>",
+            "end_time": "<End Time>",
+            "duration": "<Duration>"
+        }}
+    ]
     """
     
     return prompt
