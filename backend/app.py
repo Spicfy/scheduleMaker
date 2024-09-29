@@ -20,17 +20,39 @@ def get_OPENAI_API_KEY():
 # Set OpenAI API key
 OpenAI.api_key = get_OPENAI_API_KEY()
 
-# Endpoint to receive user input and generate a schedule
+tasks_storage = []  # Store tasks in memory for now
+
+def submit_task():
+    try:
+        data = request.json
+        print("Incoming Task Data:", data)  # Log incoming data
+
+        # Validate task data
+        if not all(key in data for key in ['title', 'description', 'priority']):
+            return jsonify({"error": "Task details are missing"}), 400
+
+        # Store the task in the in-memory storage
+        tasks_storage.append({
+            "taskname": data['title'],
+            "taskdescription": data['description'],
+            "priority": data['priority'],
+            "difficulty": data.get('difficulty', 'medium')  # Default to 'medium' if not provided
+        })
+
+        return jsonify({"message": "Task successfully submitted", "tasks": tasks_storage}), 200
+    except Exception as e:
+        print("Unexpected Error:", str(e))  # Log unexpected errors
+        return jsonify({"error": str(e)}), 500
+    
+
+# Endpoint to generate schedule
 @app.route('/generate-schedule', methods=['POST'])
 def generate_schedule():
     try:
         data = request.json
         print("Incoming Data:", data)  # Log incoming data
         
-        # Validate the input
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
+        # Validate user preferences
         user_preferences = {
             "hobby": data.get("hobby"),
             "workingStyle": data.get("workingStyle"),
@@ -42,21 +64,16 @@ def generate_schedule():
         if not all(user_preferences.values()):
             return jsonify({"error": "Some user preferences are missing"}), 400
 
-        tasks = data.get("tasks", [])
-        if not tasks:
-            return jsonify({"error": "No tasks provided"}), 400
+        # Use tasks from the in-memory storage
+        if not tasks_storage:
+            return jsonify({"error": "No tasks submitted"}), 400
+
+        # Create the prompt and call OpenAI API
+        prompt = create_prompt(user_preferences, tasks_storage)
         
-        # Check task details
-        for task in tasks:
-            if not all(key in task for key in ['taskname', 'taskdescription', 'priority', 'difficulty']):
-                return jsonify({"error": "Some task details are missing"}), 400
-
-        prompt = create_prompt(user_preferences, tasks)
-
-        # Call OpenAI's GPT API to generate the schedule
         try:
             completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",  # Use "gpt-3.5-turbo" or "gpt-4" as needed
+                model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are an expert task scheduler."},
                     {"role": "user", "content": prompt}
@@ -64,14 +81,12 @@ def generate_schedule():
                 max_tokens=500
             )
             print("OpenAI Response:", completion)  # Log the response for debugging
-            schedule = completion.choices[0].message['content']  # Adjusted to match new structure
+            schedule = completion.choices[0].message['content']
             return jsonify({"schedule": schedule}), 200
         except Exception as e:
             print("OpenAI API Error:", str(e))  # Log OpenAI API errors
             return jsonify({"error": "OpenAI API call failed: " + str(e)}), 500
 
-    except FileNotFoundError:
-        return jsonify({"error": "API key file not found"}), 500
     except Exception as e:
         print("Unexpected Error:", str(e))  # Log unexpected errors
         return jsonify({"error": str(e)}), 500
