@@ -1,5 +1,5 @@
 // React
-import React, {useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import './LoginSignUp.css'
 
 // Import User and Tasks for DB
@@ -15,9 +15,8 @@ import { useNavigate } from 'react-router-dom';
 
 // Importing DB features
 import firebase from '../__FirebaseImplement/firebase';
-import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
-import { doc,setDoc,addDoc,collection } from 'firebase/firestore'  // Additional Info + Tasks
-
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
 import 'notyf/notyf.min.css';
@@ -27,8 +26,8 @@ const LoginSignUp = () => {
     const [action, setAction] = useState('Log In');
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
-
     const navigate = useNavigate();
+    const [user, setUser] = useState(null); // Store User Data
 
     /* DEBUG: has focus 
     const handleFocus = () => {
@@ -128,6 +127,7 @@ const LoginSignUp = () => {
 
             // Jump to Greeting and load Schedule
 
+
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -182,6 +182,7 @@ const LoginSignUp = () => {
                 {
                     //modify here
                     notyf.error("Account already exists.");
+                    return;
                 }
                 else
                 {
@@ -210,7 +211,7 @@ const LoginSignUp = () => {
                 const newUser = new User(userEmail, userPassword);
                 
                  // Add to firebase
-                 addDoc(collection(firebase.database, "users"), {
+                const userDocRef = await addDoc(collection(firebase.database, "users"), {
                     email: newUser.userEmail,
                     name: newUser.userName,
                     workingStyle: newUser.workingStyle,
@@ -219,26 +220,14 @@ const LoginSignUp = () => {
                     dayEnd: newUser.dayEnd,
 
                     // Tasks
-                    registeredTasks: (Array.isArray(newUser.registeredTasks) ? 
-                    newUser.registeredTasks.map(task => ({
-                        title: task.title,
-                        description: task.description,
-                        startTime: task.startTime,
-                        endTime: task.endTime,
-                     })) : []),// if undefined,make empty
+                    registeredTasks: []
+                 });// if undefined,make empty
 
-                  }).then(userDocRef => {
                     console.log('Email:', userEmail);
                     console.log('Password:',userPassword);
                     console.log("User added with ID: ", userDocRef.id);
 
-                    addTask(currentUserCredential);
-
-                  }).catch(error => {
-                    console.error("Error adding user: ", error);
-                  });
-                // ------------> Jump to UserInfoCollect Page
-               // navigate('/SignUpFormDetailed');
+                    addTask(userDocRef.id);
 
             }catch(error){
                 const errorCode = error.code;
@@ -261,12 +250,14 @@ const LoginSignUp = () => {
     }
 
     //addTask Test
-    async function addTask(currentUserCredential) {
+    async function addTask(userId) {
         const title = prompt("Task Title:");
         const description = prompt("Task Descript:");
         const startTime = prompt("Start Time:");
         const endTime = prompt("End Time:");
-    
+
+        const currentUser = userId;
+        console.log('Current User:', currentUser);
         // Check_Input
         if (!title || !description || !startTime || !endTime) {
             alert("Need all of them");
@@ -279,24 +270,28 @@ const LoginSignUp = () => {
             startTime: startTime,
             endTime: endTime,
         };
-    
-        // Get Email
-        const currentUserEmail = currentUserCredential.user.email;
-    
-        const userDocRef = doc(firebase.database, "users", currentUserEmail);
-    
+        /*const userDocRef = doc(firebase.database, "users", currentUser); //Link json doc associated to User
+        console.log('current Document', userDocRef);*/
+        const userDocRef = doc(firebase.database, "users", userId);
+        // Debug: if doc doesnt eist
         try {
+            console.log('Current User:', currentUser);
+            const userDoc = await getDoc(userDocRef);
+            if (!userDoc.exists()) {
+                console.error("No such user document!");
+                return;
+            }
             // Renew 
             await updateDoc(userDocRef, {
                 registeredTasks: arrayUnion(newTask), // Add Task
             });
     
-            console.log("任务添加成功:", newTask);
-            alert("任务已成功添加！");
+            console.log("Added:", newTask);
+            alert("Task Added！");
     
         } catch (error) {
-            console.error("添加任务时出错: ", error);
-            alert("添加任务失败，请稍后再试。");
+            console.error("Task not added: ", error);
+            alert("Addition failed。");
         }
     }
     
