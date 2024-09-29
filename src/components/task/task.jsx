@@ -16,7 +16,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     event.preventDefault();
     
     // Construct the task object
-    const newTask = {
+    const taskObject = {
       title: newTitle,
       description: newDescription,
       priority: newPriority,
@@ -33,7 +33,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     setNewPriority('');
     setNewDescription('');
 
-    const response = fetch('http://localhost:5000/home', { // Adjust the URL as needed
+    const response = await fetch('http://localhost:5000/home', { // Adjust the URL as needed
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
         <label htmlFor="priority">Priority: </label>
         <select
           id="priority"
-          value={oritynewPri}
+          value={newPriority}
           onChange={(e) => setTaskPriority(e.target.value)}
           required
         >
