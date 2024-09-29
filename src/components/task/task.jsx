@@ -24,9 +24,11 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
         setUserUid(user.uid);
         const docRef = doc(database, 'users', user.uid);
         const docSnap = await getDoc(docRef);
+        //docSnap = di
+
+
         console.log(user.uid);
         console.log(docSnap);
-
 
         if (docSnap.exists()) {
         setUserDoc(docSnap.data());
@@ -58,8 +60,18 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     };
 
     try {
+      /*
+      //get userTask while putting it into
+      const userTasksRef = collection(database, 'users', userUid, 'tasks'); 
+      const docRef = await addDoc(userTasksRef, taskObject); // Add task to Firestore
+    // Call the onSubmit function passed as a prop with the form data
+    onSubmit(taskObject);
+    await updateDoc(userDocRef, {
+      tasks: arrayUnion(taskObject) //
+    });*/
 
-    const userDocRef = doc(database, 'users', userUid);
+    const userTasksRef = collection(database, 'users', userUid, 'tasks'); 
+    const userDocRef = await addDoc(userTasksRef, taskObject); // Add task to Firestore
     // Call the onSubmit function passed as a prop with the form data
     onSubmit(taskObject);
     await updateDoc(userDocRef, {
@@ -67,19 +79,24 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     });
 
     console.log('Task added:', taskObject);
-    
+    console.log('Task stored with ID:', userDocRef.id);
+    // OBJ with all the Data stored
+    console.log('Stored task data:', taskObject);
+    taskObject
+
     // Reset form fields
     setTaskTitle('');
     setTaskPriority('');
     setTaskDescription('');
 
-    const response = await fetch('http://localhost:5000/home', { // Adjust the URL as needed
+    // C-GPT Part
+   /* const response = await fetch('http://localhost:5000/home', { // Adjust the URL as needed
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ task: taskObject }), // Wrap taskObject in another object with the key 'task'
-    });
+    });*/
 
     if (!response.ok) {
       throw new Error('Network response was not ok');

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './HomePage.css';
 import Task from '../task/task';
 import DisplayTasks from '../DisplayTasks/DisplayTasks';
@@ -8,11 +8,47 @@ import ScheduleGrid from '../ScheduleGrid/ScheduleGrid';
 // Receive user Param
 import { useParams } from 'react-router-dom';
 // Features concerning DB
-import { addDoc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
 import { databaseAuth, database } from '../__FirebaseImplement/firebase';
 
 
 const HomePage = () => {
+
+  //get UserCredentials
+  const [userUid, setUserUid] = useState(null);
+  const [userDoc, setUserDoc] = useState(null);
+
+  useEffect(() => {
+    // Check if logged in
+    const unsubscribe = onAuthStateChanged(databaseAuth, async (user) => {
+      if (user) {
+
+        //if logged-in : get userUid, and use Uid to fetch doc stoed in Firestore
+        setUserUid(user.uid);
+        const docRef = doc(database, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+
+        console.log(user.uid);
+        console.log(docSnap);
+
+
+        if (docSnap.exists()) {
+        setUserDoc(docSnap.data());
+        } else {
+            console.log('No such document!');
+        }
+      }// not logged in
+        else {
+        console.log('No user is signed in.');
+        setUserUid(null);
+        setUserDoc(null);
+      }
+    });
+
+    return () => unsubscribe(); //unsubscribe
+  }, []);
+
   const [tasks, setTasks] = useState([
     { id: 1, title: 'Task 1', priority: 'High', completed: false },
     { id: 2, title: 'Task 2', priority: 'Medium', completed: false },
@@ -33,10 +69,15 @@ const HomePage = () => {
   const [showSchedule, setShowSchedule] = useState(false); // State to toggle schedule
   const [showTaskForm, setShowTaskForm] = useState(false); // State to toggle task form
 
-  const handleTaskSubmit = (newTask) => {
+  /*const handleTaskSubmit = (newTask) => {
     setTasks([...tasks, newTask]);
     setShowTaskForm(false); // Hide task form after adding task
+  };*/
+  const handleTaskSubmit = (newTask) => {
+    setTasks((prevTasks) => [...prevTasks, newTask]); // add
+    setShowTaskForm(false); // hide
   };
+  
 
   const toggleTaskCompletion = (id) => {
     setTasks((prevTasks) =>
@@ -97,7 +138,8 @@ const HomePage = () => {
 
             {/* Conditionally render Task component when Add Task is clicked */}
             {showTaskForm && (
-              <Task tasks={tasks} onSubmit={handleTaskSubmit} />
+              //<Task tasks={tasks} onSubmit={handleTaskSubmit} />
+              <Task tasks={tasks} onSubmit={handleTaskSubmit} userUid={userUid} />
             )}
 
             <h2>Tasks</h2>
