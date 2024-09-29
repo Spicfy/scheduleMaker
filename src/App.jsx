@@ -45,7 +45,6 @@ function App() {
   return (
 //'HOME' receives logged-in User's Id from DB
     <Router>
-  
         <nav>
           <Link to="/home/:userId" className="btn">Home</Link> 
           <Link to="/login" className="btn">Login</Link>

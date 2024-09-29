@@ -5,9 +5,9 @@ import './LoginSignUp.css'
 // Import User for DB
 import User from '../__FirebaseImplement/user'
 // Importing DB features
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { addDoc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
-import firebase from '../__FirebaseImplement/firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { setDoc, doc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
+import { databaseAuth, database } from '../__FirebaseImplement/firebase';
 
 // Srouces
 import email_icon from '../../assets/email.png'
@@ -31,19 +31,17 @@ const LoginSignUp = () => {
     const [user, setUser] = useState(null); // Store User Data
 
     // -----> Jump to Home Page with userId logged in
-    const jumpToMain = (userId) =>{
-        navigate(`/home/${userId}`);
+    /*const jumpToMain = (userId) =>{
+        navigate(`/home`);
 
-    }
+    }*/
+
     /* DEBUG: has focus 
     const handleFocus = () => {
         console.log(emailRef.current.value);
         console.log(passwordRef.current.value);
     };*/
     
-
-
-
     const handleActionChange = (newAction) => {
         setAction(newAction);
     };
@@ -67,9 +65,10 @@ const LoginSignUp = () => {
 
         // call signUp + pass references
             if (action === 'Sign Up') {
-                    await signUp(userEmail, userPassword);
+                    await signUp(navigate, userEmail, userPassword);
              } else {
-                    await logIn(userEmail, userPassword);
+        
+                    await logIn(navigate, userEmail, userPassword);
                 }
     };
 
@@ -112,7 +111,7 @@ const LoginSignUp = () => {
         1.2 Nonexisent email => ask if want to sign up?
      2. Greetings, change to Schedule page
  */
-    const logIn = async (userEmail, userPassword) => {
+    const logIn = async (navigate, userEmail, userPassword) => {
         console.log('Log In Clicked');
         console.log('Logging in with:', userEmail, userPassword);
 
@@ -135,7 +134,7 @@ const LoginSignUp = () => {
         try {
             // Get current user.
             // Get userId from current user
-            const currentUserCredential = await signInWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+            const currentUserCredential = await signInWithEmailAndPassword(databaseAuth, userEmail, userPassword);
             //console.log("User Logged in Successfully");
             console.log('Log In Clicked');
             notyf.success('Log-In successfully!');
@@ -144,7 +143,7 @@ const LoginSignUp = () => {
             console.log(userId);
 
             // Jump to Main, carrying userId (to later retrieve Snapshot)
-            jumpToMain(userId);
+            navigate('/home');
 
         } catch (error) {
             const errorCode = error.code;
@@ -171,7 +170,7 @@ const LoginSignUp = () => {
     3. Store email + password info to DB
     *4. Log in, jump to ask more info
 */
-    const signUp = async (userEmail, userPassword) => {
+    const signUp = async (navigate, userEmail, userPassword) => {
 
 
         // Create an instance of Notyf
@@ -194,7 +193,7 @@ const LoginSignUp = () => {
         // 2nd registration page.
         // in this case, delete current account and re-create
         try {
-            const signInMethods = await fetchSignInMethodsForEmail(firebase.databaseAuth, userEmail);
+            const signInMethods = await fetchSignInMethodsForEmail(databaseAuth, userEmail);
             if (signInMethods.length > 0) {
                 if(true)
                 {
@@ -217,31 +216,31 @@ const LoginSignUp = () => {
             console.log('Email:', userEmail);
             console.log('Password:',userPassword);
         try {
-                const currentUserCredential = await createUserWithEmailAndPassword(firebase.databaseAuth, userEmail, userPassword);
+                const currentUserCredential = await createUserWithEmailAndPassword(databaseAuth, userEmail, userPassword);
                 console.log("credentials", currentUserCredential);
-                console.log('User signed up successfully!');
+                console.log('User registered successfully!');
                 
                 notyf.success('User registered');
 
                 // TODO: Create CurrenUser
                 // (demo) Implement empty user Account for Admin (I am fixing bugs but use this for now)
                 const userId = currentUserCredential.user.uid;
-                // Instance of User
-                const newUser = new User(userEmail, userPassword);
-                
-                 // Add to firebase
-                const userDocRef = await addDoc(collection(firebase.database, "users"), {
-                    email: newUser.userEmail,
-                    name: newUser.userName,
-                    // Tasks
+                const userDocRef = await setDoc(doc(database,"users",userId), {
+                    userId: userId,  // get docmentId through userId?
                     registeredTasks: []
-                 });// if undefined,make empty
+
+                });
+
+               /* collection(database,"users").doc(userId).set(
+                    {userId: userId,  // get docmentId through userId?
+                    registeredTasks: []});
+*/
 
                     console.log('Email:', userEmail);
                     console.log('Password:',userPassword);
-                    console.log("User added with ID: ", userDocRef.id);
+                    console.log("Firestore Document Created with: ", userDocRef.id);
 
-                jumpToMain(userId);
+                navigate('/home');
 
             }catch(error){
                 const errorCode = error.code;

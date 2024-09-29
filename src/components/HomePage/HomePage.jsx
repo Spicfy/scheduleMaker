@@ -9,7 +9,7 @@ import ScheduleGrid from '../ScheduleGrid/ScheduleGrid';
 import { useParams } from 'react-router-dom';
 // Features concerning DB
 import { addDoc, getDoc, collection} from 'firebase/firestore';  // greateFirestore data in 'users'
-import firebase from '../__FirebaseImplement/firebase';
+import { databaseAuth, database } from '../__FirebaseImplement/firebase';
 
 
 const HomePage = () => {
@@ -19,8 +19,8 @@ const HomePage = () => {
   ]);
 
   // Receive userID once jumped to HomePage
-  const {userId} = useParams();
-  console.log(userId);
+ /* const {userId} = useParams();
+  console.log(userId);*/
 
   const hardcodedSchedule = {
     '9:00 AM': { taskName: 'Math Homework', duration: 2 },

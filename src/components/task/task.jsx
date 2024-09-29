@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 
 //import firebase features for adding tasks
-import firebase from '../__FirebaseImplement/firebase';  //get registered DB for project
+import { databaseAuth, database } from '../__FirebaseImplement/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
 
@@ -17,20 +17,24 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
 
   useEffect(() => {
     // Check if logged in
-    const unsubscribe = onAuthStateChanged(firebase.databaseAuth, async (user) => {
+    const unsubscribe = onAuthStateChanged(databaseAuth, async (user) => {
       if (user) {
-  
+
+        //if logged-in : can get userUid
         setUserUid(user.uid);
-        const docRef = doc(firebase.database, 'users', user.uid); // get docs
+        const docRef = doc(database, 'users', user.uid);
         const docSnap = await getDoc(docRef);
+        console.log(user.uid);
+        console.log(docSnap);
+
 
         if (docSnap.exists()) {
-          setUserDoc(docSnap.data());
+        setUserDoc(docSnap.data());
         } else {
-          console.log('No such document!');
+            console.log('No such document!');
         }
-      } else {
-        // 用户未登录
+      }// not logged in
+        else {
         console.log('No user is signed in.');
         setUserUid(null);
         setUserDoc(null);
@@ -50,12 +54,19 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
       description: newDescription,
       priority: newPriority,
       completed: false
+    
     };
 
     try {
-  
+
+    const userDocRef = doc(database, 'users', userUid);
     // Call the onSubmit function passed as a prop with the form data
     onSubmit(taskObject);
+    await updateDoc(userDocRef, {
+      tasks: arrayUnion(taskObject) //
+    });
+
+    console.log('Task added:', taskObject);
     
     // Reset form fields
     setTaskTitle('');
@@ -92,6 +103,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
           value={newTitle}
           onChange={(e) => setTaskTitle(e.target.value)}
           placeholder="Enter task title"
+
           required
         />
       </div>
