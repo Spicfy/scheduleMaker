@@ -19,6 +19,8 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
       completed: false
     };
 
+    try {
+  
     // Call the onSubmit function passed as a prop with the form data
     onSubmit(taskObject);
     
@@ -26,7 +28,26 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     setNewTitle('');
     setNewPriority('');
     setNewDescription('');
-  };
+
+    const response = fetch('http://localhost:5000/home', { // Adjust the URL as needed
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ task: taskObject }), // Wrap taskObject in another object with the key 'task'
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = response.json();
+    console.log('Response from server:', data);
+    
+  } catch (error) {
+    console.error('Error adding task:', error);
+  }
+};
 
   return (
     <form onSubmit={addTask} className="task-form">
