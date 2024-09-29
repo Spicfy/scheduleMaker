@@ -1,8 +1,7 @@
 .schedule_table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
-    background-color: #ffecec;
+    margin: 20px 0;;
     /* Light pink */
 }
 
@@ -30,3 +29,8 @@
     /* Slightly different background for tasks with duration */
     text-align: center;
 }
+table.schedule_table{
+    width: 95%;
+    margin: 0 auto;
+  }
+  

@@ -50,7 +50,7 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
           onChange={(e) => setNewDescription(e.target.value)}
           placeholder="Enter task description"
           rows="5"
-          cols="50"
+          cols="30"
           required
         />
       </div>
