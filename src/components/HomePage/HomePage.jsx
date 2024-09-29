@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import './HomePage.css';
-import Task from '../Task/Task';
+import Task from '../Task/task';
 import DisplayTasks from '../DisplayTasks/DisplayTasks';
 import ScheduleGrid from '../ScheduleGrid/ScheduleGrid';
 
