@@ -12,6 +12,10 @@
     padding: 20px;
     font-family: Arial, sans-serif; */
   }
+
+  body{
+    background-color: #f8e9dc;
+  }
   
   .left-content {
     width: 550px;
@@ -39,7 +43,10 @@
     justify-content: space-between;
     font-weight: bold;
   }
-  
+  .left-content{
+    width: 100%;
+    padding: 140px;
+  }
   .right-content {
     display: flex;
     flex-direction: column;
@@ -87,7 +94,7 @@
 }
 .task-view{
    display: block;
-
+  
 }
 .task-view > * {
     margin-top: 350px;
