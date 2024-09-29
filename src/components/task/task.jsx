@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 
 //import firebase features for adding tasks
 import firebase from '../__FirebaseImplement/firebase';  //get registered DB for project
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
 
 import './task.css';
@@ -10,6 +11,34 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
   const [newTitle, setTaskTitle] = useState('');
   const [newPriority, setTaskPriority] = useState('');
   const [newDescription, setTaskDescription] = useState('');
+
+  const [userUid, setUserUid] = useState(null);
+  const [userDoc, setUserDoc] = useState(null);
+
+  useEffect(() => {
+    // Check if logged in
+    const unsubscribe = onAuthStateChanged(firebase.databaseAuth, async (user) => {
+      if (user) {
+  
+        setUserUid(user.uid);
+        const docRef = doc(firebase.database, 'users', user.uid); // get docs
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setUserDoc(docSnap.data());
+        } else {
+          console.log('No such document!');
+        }
+      } else {
+        // 用户未登录
+        console.log('No user is signed in.');
+        setUserUid(null);
+        setUserDoc(null);
+      }
+    });
+
+    return () => unsubscribe(); //unsubscribe
+  }, []);
 
   // Handle form submission
   const addTask = async (event) => {
@@ -29,9 +58,9 @@ const Task = ({ tasks, onSubmit }) => {  // Destructure props
     onSubmit(taskObject);
     
     // Reset form fields
-    setNewTitle('');
-    setNewPriority('');
-    setNewDescription('');
+    setTaskTitle('');
+    setTaskPriority('');
+    setTaskDescription('');
 
     const response = await fetch('http://localhost:5000/home', { // Adjust the URL as needed
       method: 'POST',
