@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 // Importing DB features
 import firebase from '../__FirebaseImplement/firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
+import { doc, setDoc, getDoc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';  // Additional Info + Tasks
 // Importing Notyf Toast
 import { Notyf } from 'notyf'; 
 import 'notyf/notyf.min.css';
@@ -182,6 +182,7 @@ const LoginSignUp = () => {
                 {
                     //modify here
                     notyf.error("Account already exists.");
+                    return;
                 }
                 else
                 {
@@ -210,7 +211,7 @@ const LoginSignUp = () => {
                 const newUser = new User(userEmail, userPassword);
                 
                  // Add to firebase
-                 addDoc(collection(firebase.database, "users"), {
+                const userDocRef = await addDoc(collection(firebase.database, "users"), {
                     email: newUser.userEmail,
                     name: newUser.userName,
                     workingStyle: newUser.workingStyle,
@@ -219,29 +220,14 @@ const LoginSignUp = () => {
                     dayEnd: newUser.dayEnd,
 
                     // Tasks
-                    registeredTasks: (Array.isArray(newUser.registeredTasks) ? 
-                    newUser.registeredTasks.map(task => ({
-                        title: task.title,
-                        description: task.description,
-                        startTime: task.startTime,
-                        endTime: task.endTime,
-                     })) : []),// if undefined,make empty
+                    registeredTasks: []
+                 });// if undefined,make empty
 
-                  }).then(userDocRef => {
                     console.log('Email:', userEmail);
                     console.log('Password:',userPassword);
                     console.log("User added with ID: ", userDocRef.id);
 
-                    addTask(currentUserCredential.user.email);
-
-                        // Store + Jump to UserInfoCollect Page
-                        //navigate('/SignUpFormDetailed', { state: { email: userEmail } });
-
-                  }).catch(error => {
-                    console.error("Error adding user: ", error);
-                  });
-
-
+                    addTask(userDocRef.id);
 
             }catch(error){
                 const errorCode = error.code;
@@ -264,13 +250,13 @@ const LoginSignUp = () => {
     }
 
     //addTask Test
-    async function addTask(userParameter) {
+    async function addTask(userId) {
         const title = prompt("Task Title:");
         const description = prompt("Task Descript:");
         const startTime = prompt("Start Time:");
         const endTime = prompt("End Time:");
 
-        const currentUser = userParameter;
+        const currentUser = userId;
         console.log('Current User:', currentUser);
         // Check_Input
         if (!title || !description || !startTime || !endTime) {
@@ -284,12 +270,18 @@ const LoginSignUp = () => {
             startTime: startTime,
             endTime: endTime,
         };
-    
-        // Get Email
-        const userDocRef = firebase.firestore().collection('users').doc(currentUser); 
+        /*const userDocRef = doc(firebase.database, "users", currentUser); //Link json doc associated to User
+        console.log('current Document', userDocRef);*/
+        const userDocRef = doc(firebase.database, "users", userId);
+        // Debug: if doc doesnt eist
         try {
             console.log('Current User:', currentUser);
-            // Renew s
+            const userDoc = await getDoc(userDocRef);
+            if (!userDoc.exists()) {
+                console.error("No such user document!");
+                return;
+            }
+            // Renew 
             await updateDoc(userDocRef, {
                 registeredTasks: arrayUnion(newTask), // Add Task
             });

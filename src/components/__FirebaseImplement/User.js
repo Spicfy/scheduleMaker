@@ -16,27 +16,28 @@ class User {
     #userName; 
     static VALID_WORKING_STYLES = [-1, 0, 1, 2];
     #workingStyle;
+    #priority;
 
     // related to tasks
-    static MAX_FAVOURITE = 3;
+    /*static MAX_FAVOURITE = 3;
     #favTasks;
 
     static TIME_DAY_START = "00:00"; //
     static TIME_DAY_END = "23:59"; // 
     #dayStart;
     #dayEnd;
-
+*/
     #registeredTasks = []; //typ Task
 
     // 2. Constructor
-    constructor(userEmail, userPassword, userName = -1, workingStyle = -1) { // by default, userName is -1
+    constructor(userEmail, userPassword, userName = -1, workingStyle = -1, priority = -1) { // by default, userName is -1
         this.#userEmail = userEmail; // MUST
         this.#userPassword = userPassword; // MUST
         this.#userName = userName; 
         this.#workingStyle = workingStyle; 
-        this.#favTasks = [User.MAX_FAVOURITE]; 
+        /*this.#favTasks = [User.MAX_FAVOURITE]; 
         this.#dayStart = User.TIME_DAY_START; 
-        this.#dayEnd = User.TIME_DAY_END; 
+        this.#dayEnd = User.TIME_DAY_END; */
     } 
 
     // 3. Getter
