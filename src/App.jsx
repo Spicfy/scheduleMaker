@@ -5,7 +5,7 @@ import {BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; 
 import DisplayTasks from './components/DisplayTasks/DisplayTasks';
 import ScheduleGrid from './components/ScheduleGrid/ScheduleGrid'; 
 import LoginSignUp from './components/LoginSignUp/LoginSignUp';
-import SignUpFormDetailed from './components/LoginSignUp/SignUpFormDetailed';
+import SignUpFormDetailed from './components/LoginSignUp/UserInfoCollect';
 import HomePage from './components/HomePage/HomePage';
 
 import './App.css';

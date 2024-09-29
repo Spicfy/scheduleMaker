@@ -214,11 +214,6 @@ const LoginSignUp = () => {
                 const userDocRef = await addDoc(collection(firebase.database, "users"), {
                     email: newUser.userEmail,
                     name: newUser.userName,
-                    workingStyle: newUser.workingStyle,
-                    favTasks: newUser.favTasks,
-                    dayStart: newUser.dayStart,
-                    dayEnd: newUser.dayEnd,
-
                     // Tasks
                     registeredTasks: []
                  });// if undefined,make empty
@@ -253,13 +248,13 @@ const LoginSignUp = () => {
     async function addTask(userId) {
         const title = prompt("Task Title:");
         const description = prompt("Task Descript:");
-        const startTime = prompt("Start Time:");
-        const endTime = prompt("End Time:");
+        // const prioritized 
 
+        // Get current user
         const currentUser = userId;
         console.log('Current User:', currentUser);
         // Check_Input
-        if (!title || !description || !startTime || !endTime) {
+        if (!title || !description) {
             alert("Need all of them");
             return;
         }
@@ -267,8 +262,6 @@ const LoginSignUp = () => {
         const newTask = {
             title: title,
             description: description,
-            startTime: startTime,
-            endTime: endTime,
         };
         /*const userDocRef = doc(firebase.database, "users", currentUser); //Link json doc associated to User
         console.log('current Document', userDocRef);*/
