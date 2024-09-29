@@ -67,7 +67,7 @@ const HomePage = () => {
         </div>
 
         <div className="task-view">
-          <button onClick={handleScheduleToggle}>
+          <button onClick={handleScheduleToggle} className="schedule-btn">
             {showSchedule ? 'Hide Schedule' : 'View Schedule'}
           </button>
 

@@ -5,12 +5,7 @@
 
 }
 .main {
-    /* display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
-    font-family: Arial, sans-serif; */
+    height: 200px;
   }
 
   body{
@@ -94,6 +89,7 @@
 }
 .task-view{
    display: block;
+   
   
 }
 .task-view > * {
@@ -106,4 +102,14 @@
     justify-content: center;
     align-items: center;
     margin-top: 200px;
+}
+.schedule-btn{
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 35px;
 }
