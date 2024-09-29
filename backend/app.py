@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI  # Import the OpenAI client
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 app = Flask(__name__)
 CORS(app)  # Enable cross-origin requests
@@ -15,54 +18,55 @@ def get_OPENAI_API_KEY():
             key = key_file.read().strip()
             return key
     except FileNotFoundError:
-        raise Exception("API Key file not found. Please ensure 'OPENAI_API_KEY.txt' is in the correct location.")
+        raise Exception("API Key file not found.")
 
 # Set OpenAI API key
 OpenAI.api_key = get_OPENAI_API_KEY()
 
-tasks_storage = []  # Store tasks in memory for now
-
-def submit_task():
+def get_FIREBASE_KEY():
     try:
-        data = request.json
-        print("Incoming Task Data:", data)  # Log incoming data
-
-        # Validate task data
-        if not all(key in data for key in ['title', 'description', 'priority']):
-            return jsonify({"error": "Task details are missing"}), 400
-
-        # Store the task in the in-memory storage
-        tasks_storage.append({
-            "taskname": data['title'],
-            "taskdescription": data['description'],
-            "priority": data['priority'],
-            "difficulty": data.get('difficulty', 'medium')  # Default to 'medium' if not provided
-        })
-
-        return jsonify({"message": "Task successfully submitted", "tasks": tasks_storage}), 200
-    except Exception as e:
-        print("Unexpected Error:", str(e))  # Log unexpected errors
-        return jsonify({"error": str(e)}), 500
+        with open("FIREBASE_KEY.txt", "r") as key_file:
+            key = key_file.read().strip()
+            return key
+    except FileNotFoundError:
+        raise Exception("API Key file not found.")
     
+firebase_key = get_FIREBASE_KEY()
 
-# Endpoint to generate schedule
-@app.route('/generate-schedule', methods=['POST'])
+cred = credentials.Certificate(firebase_key)
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'schedulemaker-bb299.firebaseapp.com'
+})
+
+# Reference the database
+ref = db.reference('users')
+
+# Fetch data
+user_data = ref.get()
+print("User Data:", user_data)  # Log user data
+
+tasks_storage = []  # Store tasks in memory for now
+    
+@app.route('/', methods=['POST'])
 def generate_schedule():
     try:
-        data = request.json
-        print("Incoming Data:", data)  # Log incoming data
+        task_data = request.json.get('task', {})
+        print("Incoming Data:", task_data)  # Log incoming data
         
+        if not all(key in task_data for key in ['title', 'description', 'priority']):
+            return jsonify({"error": "Task details are missing"}), 400
+        
+        tasks_storage.append({
+            "taskname": task_data['title'],
+            "taskdescription": task_data['description'],
+            "priority": task_data['priority'],
+            "difficulty": task_data.get('difficulty', 'medium')  # Default to 'medium' if not provided
+        })
+            
         # Validate user preferences
         user_preferences = {
-            "hobby": data.get("hobby"),
-            "workingStyle": data.get("workingStyle"),
-            "breakPreference": data.get("breakPreference"),
-            "dayStart": data.get("dayStart"),
-            "dayEnd": data.get("dayEnd")
+            "email": user_data['email'],
         }
-
-        if not all(user_preferences.values()):
-            return jsonify({"error": "Some user preferences are missing"}), 400
 
         # Use tasks from the in-memory storage
         if not tasks_storage:
@@ -73,7 +77,7 @@ def generate_schedule():
         
         try:
             completion = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are an expert task scheduler."},
                     {"role": "user", "content": prompt}
@@ -97,12 +101,8 @@ def create_prompt(user_preferences, tasks):
                            for i, task in enumerate(tasks)])
     
     prompt = f"""
-    I need to create a daily schedule for a user with the following characteristics and preferences:
-    Hobby: {user_preferences['hobby']}
-    Working Style: {user_preferences['workingStyle']}
-    Break Preference: {user_preferences['breakPreference']}
-    Day Start: {user_preferences['dayStart']}
-    Day End: {user_preferences['dayEnd']}
+    I need help scheduling my day. I am an expert task scheduler and I need to plan my day efficiently.
+    Based on my email, {user_preferences['email']}, try to analyze and predict my personality and preferences.
 
     The user has the following tasks for today:
     {task_list}
