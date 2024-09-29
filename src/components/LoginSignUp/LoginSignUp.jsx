@@ -232,10 +232,10 @@ const LoginSignUp = () => {
                     console.log('Password:',userPassword);
                     console.log("User added with ID: ", userDocRef.id);
 
-                    addTask(currentUserCredential);
+                    addTask(currentUserCredential.user.email);
 
                         // Store + Jump to UserInfoCollect Page
-                        navigate('/SignUpFormDetailed', { state: { email: userEmail } });
+                        //navigate('/SignUpFormDetailed', { state: { email: userEmail } });
 
                   }).catch(error => {
                     console.error("Error adding user: ", error);
@@ -264,12 +264,14 @@ const LoginSignUp = () => {
     }
 
     //addTask Test
-    async function addTask(currentUserCredential) {
+    async function addTask(userParameter) {
         const title = prompt("Task Title:");
         const description = prompt("Task Descript:");
         const startTime = prompt("Start Time:");
         const endTime = prompt("End Time:");
-    
+
+        const currentUser = userParameter;
+        console.log('Current User:', currentUser);
         // Check_Input
         if (!title || !description || !startTime || !endTime) {
             alert("Need all of them");
@@ -284,11 +286,10 @@ const LoginSignUp = () => {
         };
     
         // Get Email
-        const currentUserEmail = currentUserCredential.user.email;
-        const userDocRef = doc(firebase.database, "users", currentUserEmail);
-    
+        const userDocRef = firebase.firestore().collection('users').doc(currentUser); 
         try {
-            // Renew 
+            console.log('Current User:', currentUser);
+            // Renew s
             await updateDoc(userDocRef, {
                 registeredTasks: arrayUnion(newTask), // Add Task
             });
